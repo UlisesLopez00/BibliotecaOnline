@@ -47,48 +47,62 @@ app.post('/usuario', (req, res) => {
 })
 
 app.put('/usuario', (req, res) => {
-    let id = req.body.id;
-    let body = _.pick(req.body['nombre', 'apellido', 'telefono', 'correo', 'password'])
-
-    Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query'}, (err, usrDB) => {
-        if (err){
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-        return res.status(200).json({
-            ok: true, 
-            usrDB
+    const newNombre = req.body.newNombre
+    let id = req.body.id
+    
+    try {
+        Usuario.findById(id, (err, updatedUsuario) => {
+            updatedUsuario.nombre = newNombre;
+            updatedUsuario.save();
+            res.send("Actualizado")
         })
-    })
+    } catch(err) {
+        console.log(err)
+    }
+    // let body = _.pick(req.body['nombre', 'apellido', 'telefono', 'correo', 'password'])
+
+    // Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query'}, (err, usrDB) => {
+    //     if (err){
+    //         return res.status(400).json({
+    //             ok: false,
+    //             err
+    //         });
+    //     }
+    //     return res.status(200).json({
+    //         ok: true, 
+    //         usrDB
+    //     })
+    // })
 })
 
-app.delete('/usuario', (req, res) => {
-    let id  = req.body.id
+app.delete('/usuario/:id', (req, res) => {
+    let id  = req.params.id
 
-    Usuario.deleteOne({_id: id}, (err, resp) => {
-        if(err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-        if(resp.deletedCount === 0) {
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    id,
-                    msg: 'Usuario no encontrado'
-                }
-            })
-        }
+    Usuario.findByIdAndRemove(id).exec()
+    res.send("Eliminado")
 
-        return res.status(200).json({
-            ok: true,
-            resp
-        })
-    })
+    // Usuario.deleteOne({_id: id}, (err, resp) => {
+    //     if(err) {
+    //         return res.status(400).json({
+    //             ok: false,
+    //             err
+    //         });
+    //     }
+    //     if(resp.deletedCount === 0) {
+    //         return res.status(400).json({
+    //             ok: false,
+    //             err: {
+    //                 id,
+    //                 msg: 'Usuario no encontrado'
+    //             }
+    //         })
+    //     }
+
+    //     return res.status(200).json({
+    //         ok: true,
+    //         resp
+    //     })
+    // })
 })
 
 module.exports = app;
