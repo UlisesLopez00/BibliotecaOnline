@@ -17,6 +17,10 @@ let usuariSchema = new Schema({
     }, 
     password: {
         type: String
+    },
+    usr_role: {
+        type: String,
+        default: "admin"
     }
 })
 

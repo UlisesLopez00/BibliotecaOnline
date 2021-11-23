@@ -63,8 +63,8 @@ app.put('/libro', (req, res) => {
     });
 });
 
-app.delete('/libro', (req, res) => {
-    let id = req.body.id;
+app.delete('/libro/:id', (req, res) => {
+    let id = req.params.id;
 
     Libro.deleteOne({ _id: id }, (err, resp) => {
         if (err) {
