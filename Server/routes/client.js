@@ -1,19 +1,32 @@
 const express = require('express');
+<<<<<<< HEAD
 const Client = require('./../models/client');
 const app = express();
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
   }
+=======
+const Client = require('../models/client');
+const app = express();
+
+>>>>>>> cab2374dbcacea6172204f5f0d6882dbcb164240
 app.post('/client', (req, res) => {
     let body = req.body;
 
     let client = new Client({
+<<<<<<< HEAD
         shortId: getRandomInt(111111,999999),
         nombre: body.nombre,
         apellido: body.apellido,
         telefono: body.telefono,
         direccion: body.direccion,
         correo: body.correo,
+=======
+        nombre: body.nombre,
+        apellido: body.apellido,
+        telefono: body.telefono,
+        direccion: body.direccion
+>>>>>>> cab2374dbcacea6172204f5f0d6882dbcb164240
     });
 
     client.save((err, clientDB) => {
@@ -47,6 +60,7 @@ app.get('/client', (req, res) => {
     })
 })
 
+<<<<<<< HEAD
 app.get('/client/buscar=:id', (req, res) => {
     let id = req.params.id;
     Client.findById(id)
@@ -64,6 +78,8 @@ app.get('/client/buscar=:id', (req, res) => {
     });
 });
 
+=======
+>>>>>>> cab2374dbcacea6172204f5f0d6882dbcb164240
 app.delete('/client/:id', (req, res) => {
     let id = req.params.id
     
