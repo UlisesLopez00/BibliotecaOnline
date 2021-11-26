@@ -2,7 +2,9 @@ const express = require('express');
 const _ = require('underscore');
 const Libro = require('../models/libro');
 const app = express();
-
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
 app.get('/libro', (req, res) => {
     Libro.find()
         .exec((err, libros) => {
@@ -18,10 +20,26 @@ app.get('/libro', (req, res) => {
             });
         });
 });
-
+app.get('/libro/buscar=:id', (req, res) => {
+    let id = req.params.id;
+    Libro.find({shortId:id})
+        .exec((err, libros) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+            return res.status(200).json({
+                ok: true,
+                libros
+            });
+        });
+});
 app.post('/libro', (req, res) => {
     let body = req.body;
     let libro = new Libro({
+        shortId: getRandomInt(111111,999999),
         titulo: body.titulo,
         autor: body.autor,
         categoria: body.categoria,

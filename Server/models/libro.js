@@ -9,6 +9,9 @@ let fecha = year + "-" + month + "-" + date;
 let Schema = mongoose.Schema;
 
 let libroSchema = new Schema({
+    shortId: {
+        type: String,
+    },
     titulo: {
         type: String
     },
@@ -23,7 +26,7 @@ let libroSchema = new Schema({
     }, 
     fecha: {
         type: String,
-        default:fecha
+        default:fecha.toString()
     },
     estado: {
         type: Boolean,

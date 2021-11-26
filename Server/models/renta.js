@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Libro = require("./libro");
+const Client = require("./client");
 
 let Schema = mongoose.Schema;
 let ts = Date.now();
@@ -9,10 +11,12 @@ let year = date_ob.getFullYear();
 let fecha = year + "-" + month + "-" + date;
 let rentaSchema = new Schema({
     libro: {
-        type: String
+        type: Schema.Types.ObjectID,
+        ref: Libro,
     },
-    usuario: {
-        type: String
+    client: {
+        type: Schema.Types.ObjectID,
+        ref: Client,
     },
     fecha: {
         type: Date,

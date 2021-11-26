@@ -4,7 +4,9 @@ const Renta = require('../models/renta');
 const app = express();
 
 app.get('/renta', (req, res) => {
-    Renta.find()
+    Renta.find({estado:true})
+        .populate("libro")
+        .populate("client")
         .exec((err, renta) => {
             if (err) {
                 return res.status(400).json({
@@ -12,42 +14,56 @@ app.get('/renta', (req, res) => {
                     err
                 });
             }
+            // console.log(renta);
+            let now = new Date()
+            let response = [];
+          
+            renta.forEach((element) => {
+                let strToDate = new Date(element.fecha_entrega);
+                if ((Math.round((strToDate - now) / (1000 * 60 * 60 * 24))+1) < 0) {
+                    response.push({
+                        _id:element._id,
+                        libro:element.libro.titulo,
+                        client:element.client.nombre + " " + element.client.apellido ,
+                        fecha_entrega:element.fecha_entrega,
+                        telefono:element.client.telefono,
+                        cargos:(Math.round((strToDate - now) / (1000 * 60 * 60 * 24))+1)
+                    })
+                }else{
+                    response.push({
+                        _id:element._id,
+                        libro:element.libro.titulo,
+                        client:element.client.nombre + " " + element.client.apellido ,
+                        telefono:element.client.telefono,
+                        fecha_entrega:element.fecha_entrega,
+                        cargos:0
+                    })
+                }
+            });
+            response.sort(function (a, b) {
+                if (a.cargos > b.cargos) {
+                  return 1;
+                }
+                if (a.cargos < b.cargos) {
+                  return -1;
+                }
+                // a must be equal to b
+                return 0;
+              });
             return res.status(200).json({
                 ok: true,
-                renta
+                response
             });
         });
 });
-sumaFecha = function(d, fecha)
-{
- var Fecha = new Date();
- var sFecha = fecha || (Fecha.getDate() + "/" + (Fecha.getMonth() +1) + "/" + Fecha.getFullYear());
- var sep = sFecha.indexOf('/') != -1 ? '/' : '-';
- var aFecha = sFecha.split(sep);
- var fecha = aFecha[2]+'/'+aFecha[1]+'/'+aFecha[0];
- fecha= new Date(fecha);
- fecha.setDate(fecha.getDate()+parseInt(d));
- var anno=fecha.getFullYear();
- var mes= fecha.getMonth()+1;
- var dia= fecha.getDate();
- mes = (mes < 10) ? ("0" + mes) : mes;
- dia = (dia < 10) ? ("0" + dia) : dia;
- var fechaFinal = dia+sep+mes+sep+anno;
- return (fechaFinal);
- }
+
 app.post('/renta', (req, res) => {
-    let ts = Date.now();
-let date_ob = new Date(ts);
-let date = date_ob.getDate();
-let month = date_ob.getMonth() + 1;
-let year = date_ob.getFullYear();
-let fecha = date + "/" + month + "/" + year;
     let body = req.body;
     let renta = new Renta({
         libro: body.libro,
-        usuario: body.usuario,
-        fecha_entrega: sumaFecha(5,fecha),
-        total_pagar:(body.dias*5)
+        client: body.usuario,
+        fecha_entrega:body.entrega,
+        total_pagar:body.total
     });
 
     renta.save((err, rentaDB) => {
@@ -65,11 +81,11 @@ let fecha = date + "/" + month + "/" + year;
     });
 });
 
-app.put('/renta', (req, res) => {
-    let id = req.body.id;
-    let body = _.pick(req.body['titulo', 'autor', 'categoria', 'editorial', 'fecha', 'estado'])
+app.put('/renta/delete=:id', (req, res) => {
+    let id  = req.params.id;
+    console.log(id);
 
-    Renta.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query' }, (err, libDB) => {
+    Renta.findByIdAndUpdate(id, {estado:false}, { new: true, runValidators: true, context: 'query' }, (err, libDB) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
