@@ -36,6 +36,22 @@ app.get('/libro/buscar=:id', (req, res) => {
             });
         });
 });
+app.get('/libro/regex=:regex', (req, res) => {
+    let regex = req.params.regex;
+    Libro.find({titulo:{ $regex: '.*' + regex + '.*',$options:'i' }})
+        .exec((err, libros) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+            return res.status(200).json({
+                ok: true,
+                libros
+            });
+        });
+});
 app.post('/libro', (req, res) => {
     let body = req.body;
     let libro = new Libro({
