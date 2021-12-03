@@ -4,9 +4,9 @@ const app = express()
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: false, parameterLimit: 50000 }));
+app.use(bodyParser.json({ limit: '100mb' }));
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
 app.use(cors())
 
 app.use(require('./routes/index'))

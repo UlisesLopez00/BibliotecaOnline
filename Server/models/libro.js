@@ -28,6 +28,10 @@ let libroSchema = new Schema({
         type: String,
         default:fecha.toString()
     },
+    img: {
+        type:Array,
+        default:[]
+    },
     estado: {
         type: Boolean,
         default: true
