@@ -19,14 +19,12 @@ steps:
     npm install
     npm run build
   displayName: 'npm install and build'
-- task: FtpUpload@2
+- task: SonarCloudPrepare@1
   inputs:
-    credentialsOption: 'serviceEndpoint'
-    serverEndpoint: 'biblioteca'
-    rootDirectory: 
-    filePatterns: '**'
-    remoteDirectory: '/upload/'
-    clean: false
-    cleanContents: false
-    preservePaths: false
-    trustSSL: false
+    SonarCloud: 'biblioteca2'
+    organization: 'uliseslopez181224'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'uliseslopez181224_biblioteca'
+    cliProjectName: 'biblioteca'
+    cliSources: '.'
