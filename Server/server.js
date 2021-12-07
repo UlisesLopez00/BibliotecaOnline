@@ -19,7 +19,7 @@ mongoose.connect(process.env.URLDB, {
         if(err) throw err;
         console.log("Base de datos conectada exitosamente")
 }); 
-
+//ftp
 app.listen(process.env.PORT, () => {
     console.log("Escuchando por el puerto", process.env.PORT);
 }) 
